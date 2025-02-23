@@ -1,89 +1,3 @@
-// import 'package:cinecast_fyp/model/user_model.dart';
-// import 'package:cinecast_fyp/screens/login_screen.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:flutter/material.dart';
-
-// class SettingsScreen extends StatefulWidget {
-//   const SettingsScreen({super.key});
-
-//   @override
-//   State<SettingsScreen> createState() => _SettingsScreenState();
-// }
-
-// class _SettingsScreenState extends State<SettingsScreen> {
-//   User? user = FirebaseAuth.instance.currentUser;
-//   UserModel loggedInUser = UserModel();
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     FirebaseFirestore.instance
-//         .collection("users")
-//         .doc(user!.uid)
-//         .get()
-//         .then((value) {
-//       this.loggedInUser = UserModel.fromMap(value.data());
-//       setState(() {});
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         // backgroundColor: Color(0xFF0A0E21),
-//         title: Center(
-//             child: Text('Settings',
-//                 style: TextStyle(
-//                     fontWeight: FontWeight.bold, color: Color(0xFF0A0E21)))),
-//         elevation: 0,
-//       ),
-//       // appBar: AppBar(
-//       //   title: const Text("Settings"),
-//       //   centerTitle: true,
-//       //   // automaticallyImplyLeading: false, // This removes the back button.
-//       // ),
-//       body: Center(
-//         child: Padding(
-//           padding: EdgeInsets.all(20),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: <Widget>[
-//               Text(
-//                 "Hi ${loggedInUser.firstName} ${loggedInUser.secondName}",
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),
-//               SizedBox(
-//                 height: 10,
-//               ),
-//               Text("${loggedInUser.email}",
-//                   style: TextStyle(
-//                       color: Colors.black54, fontWeight: FontWeight.w500)),
-//               SizedBox(
-//                 height: 15,
-//               ),
-//               ActionChip(
-//                   label: Text("Log Out"),
-//                   onPressed: () {
-//                     logout(context);
-//                   }),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   // the logout function
-//   Future<void> logout(BuildContext context) async {
-//     await FirebaseAuth.instance.signOut();
-//     Navigator.of(context).pushReplacement(
-//         MaterialPageRoute(builder: (context) => LoginScreen()));
-//   }
-// }
-
 import 'package:cinecast_fyp/model/user_model.dart';
 import 'package:cinecast_fyp/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -232,7 +146,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           itemBuilder: (context, index) {
                             var data = snapshot.data!.docs[index].data()
                                 as Map<String, dynamic>;
-                            return PredictionListItem(data: data);
+                            String docId = snapshot
+                                .data!.docs[index].id; // Get document ID
+                            return PredictionListItem(
+                                data: data,
+                                docId: docId,
+                                onDelete: () => _deletePrediction(docId));
                           },
                         );
                       },
@@ -254,12 +173,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
+
+  Future<void> _deletePrediction(String docId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(user!.uid)
+          .collection('predictions')
+          .doc(docId)
+          .delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Prediction deleted successfully.')),
+      );
+    } catch (e) {
+      print('Error deleting prediction: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete prediction.')),
+      );
+    }
+  }
 }
 
 class PredictionListItem extends StatelessWidget {
   final Map<String, dynamic> data;
+  final String docId;
+  final VoidCallback onDelete;
 
-  PredictionListItem({required this.data});
+  PredictionListItem(
+      {required this.data, required this.docId, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -277,16 +219,24 @@ class PredictionListItem extends StatelessWidget {
                   style: TextStyle(color: Colors.grey)),
             ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PredictionDetailScreen(data: data),
-                ),
-              );
-            },
-            child: Text('VIEW', style: TextStyle(color: Color(0xFF4A148C))),
+          Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PredictionDetailScreen(data: data),
+                    ),
+                  );
+                },
+                child: Text('VIEW', style: TextStyle(color: Color(0xFF4A148C))),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: onDelete,
+              ),
+            ],
           ),
         ],
       ),

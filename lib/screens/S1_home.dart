@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -40,8 +41,10 @@ class _HomeState extends State<Home> {
         highestGrossingMovies = data['results'];
       });
     } else {
-      print('Failed to load highest grossing movies: ${response.statusCode}');
       // Handle error appropriately (show a message, etc.)
+      Fluttertoast.showToast(
+          msg:
+              'Failed to load highest grossing movies: ${response.statusCode}');
     }
   }
 
@@ -56,8 +59,9 @@ class _HomeState extends State<Home> {
         popularMovies = data['results'];
       });
     } else {
-      print('Failed to load popular movies: ${response.statusCode}');
       // Handle error appropriately (show a message, etc.)
+      Fluttertoast.showToast(
+          msg: 'Failed to load popular movies: ${response.statusCode}');
     }
   }
 
@@ -157,7 +161,7 @@ class MovieCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            "Release Date: " + movie['release_date'],
+            "Release Date: ${movie['release_date']}",
             style: TextStyle(color: Colors.grey, fontSize: 12),
             overflow: TextOverflow.ellipsis,
           ),
@@ -244,19 +248,10 @@ class PopularMovieCard extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        "Release Date: " + movie['release_date'],
+                        "Release Date: ${movie['release_date']}",
                         style: TextStyle(color: Colors.black, fontSize: 12),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8),
-                      Wrap(
-                        spacing: 4,
-                        children: [
-                          //Example Genre Tags
-                          GenreTag(genre: "Action"),
-                          GenreTag(genre: "Sci-Fi"),
-                        ],
                       ),
                     ],
                   ),
@@ -266,29 +261,12 @@ class PopularMovieCard extends StatelessWidget {
           ),
         ),
         Divider(
-          color: Colors.grey.shade300, // Adjust color as needed
-          thickness: 1, // Adjust thickness as needed
-          indent: 16, // Adjust indent as needed
-          endIndent: 16, // Adjust endIndent as needed
+          color: Colors.grey.shade300,
+          thickness: 1,
+          indent: 16,
+          endIndent: 16,
         ),
       ],
-    );
-  }
-}
-
-class GenreTag extends StatelessWidget {
-  final String genre;
-  const GenreTag({super.key, required this.genre});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.blueGrey.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(genre, style: TextStyle(color: Colors.white, fontSize: 10)),
     );
   }
 }
