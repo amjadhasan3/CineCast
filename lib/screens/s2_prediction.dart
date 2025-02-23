@@ -369,8 +369,7 @@ class _PredictionState extends State<Prediction> {
 
       try {
         final response = await http.post(
-          Uri.parse(
-              'http://10.0.2.2:3000/predict'), // Try this for Android emulator
+          Uri.parse('http://10.0.2.2:3000/predict'),
           headers: {"Content-Type": "application/json"},
           body: json.encode(movieData),
         );

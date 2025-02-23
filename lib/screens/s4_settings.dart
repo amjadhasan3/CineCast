@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, use_key_in_widget_constructors, use_super_parameters
 
 import 'package:cinecast_fyp/model/user_model.dart';
 import 'package:cinecast_fyp/screens/login_screen.dart';
@@ -9,7 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart'; // Import intl package
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key}); // Add Key? key
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -189,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(content: Text('Prediction deleted successfully.')),
       );
     } catch (e) {
-      Fluttertoast.showToast(msg: "Error deleting prediction: $e");
+      Fluttertoast.showToast(msg: 'Error deleting prediction: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to delete prediction.')),
       );
@@ -203,10 +203,7 @@ class PredictionListItem extends StatelessWidget {
   final VoidCallback onDelete;
 
   const PredictionListItem(
-      {super.key,
-      required this.data,
-      required this.docId,
-      required this.onDelete});
+      {required this.data, required this.docId, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -252,7 +249,7 @@ class PredictionListItem extends StatelessWidget {
 class PredictionDetailScreen extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  PredictionDetailScreen({required this.data});
+  const PredictionDetailScreen({required this.data});
 
   @override
   Widget build(BuildContext context) {
