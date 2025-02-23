@@ -1,7 +1,7 @@
-import 'package:cinecast_fyp/screens/S1_home.dart';
-import 'package:cinecast_fyp/screens/S2_prediction.dart';
-import 'package:cinecast_fyp/screens/S3_search.dart';
-import 'package:cinecast_fyp/screens/S4_settings.dart';
+import 'package:cinecast_fyp/screens/s1_home.dart';
+import 'package:cinecast_fyp/screens/s2_prediction.dart';
+import 'package:cinecast_fyp/screens/s3_search.dart';
+import 'package:cinecast_fyp/screens/s4_settings.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
