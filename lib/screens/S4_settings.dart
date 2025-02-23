@@ -1,12 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cinecast_fyp/model/user_model.dart';
 import 'package:cinecast_fyp/screens/login_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart'; // Import intl package
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key); // Add Key? key
+  const SettingsScreen({super.key}); // Add Key? key
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -17,7 +20,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   UserModel loggedInUser = UserModel();
   final FirebaseFirestore _firestore =
       FirebaseFirestore.instance; // Add FirebaseFirestore instance
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Add FirebaseAuth instance
 
   @override
   void initState() {
@@ -39,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           setState(() {});
         }
       } catch (e) {
-        print("Error loading user data: $e");
+        Fluttertoast.showToast(msg: "Error loading user data: $e");
         // Handle the error appropriately (e.g., display an error message)
       }
     }
@@ -187,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(content: Text('Prediction deleted successfully.')),
       );
     } catch (e) {
-      print('Error deleting prediction: $e');
+      Fluttertoast.showToast(msg: "Error deleting prediction: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to delete prediction.')),
       );
@@ -200,8 +202,11 @@ class PredictionListItem extends StatelessWidget {
   final String docId;
   final VoidCallback onDelete;
 
-  PredictionListItem(
-      {required this.data, required this.docId, required this.onDelete});
+  const PredictionListItem(
+      {super.key,
+      required this.data,
+      required this.docId,
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
