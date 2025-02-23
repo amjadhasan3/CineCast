@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -36,14 +37,15 @@ class _SearchState extends State<Search> {
           _isLoading = false;
         });
       } else {
-        print('Search failed with status code: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Search failed with status code: ${response.statusCode}');
         setState(() {
           _isLoading = false;
           // Optionally display an error message to the user
         });
       }
     } catch (e) {
-      print('An error occurred: $e');
+      Fluttertoast.showToast(msg: 'An error occurred: $e');
       setState(() {
         _isLoading = false;
         // Optionally display an error message to the user
@@ -183,7 +185,7 @@ class MovieSearchResultTile extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        "Release Date: " + movie['release_date'],
+                        "Release Date: ${movie['release_date']}",
                         style: TextStyle(color: Colors.black, fontSize: 12),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
