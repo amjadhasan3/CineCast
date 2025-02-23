@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -143,14 +144,15 @@ class _PredictionState extends State<Prediction> {
           _isLoadingGenres = false;
         });
       } else {
-        print('Failed to fetch genres: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Failed to fetch genres: ${response.statusCode}');
         setState(() {
           _genreOptions = [];
           _isLoadingGenres = false;
         });
       }
     } catch (e) {
-      print('Error fetching genres: $e');
+      Fluttertoast.showToast(msg: 'Error fetching genres: $e');
       setState(() {
         _genreOptions = [];
         _isLoadingGenres = false;
@@ -188,14 +190,15 @@ class _PredictionState extends State<Prediction> {
           _isLoadingCompanies = false;
         });
       } else {
-        print('Failed to fetch companies: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Failed to fetch companies: ${response.statusCode}');
         setState(() {
           _companySuggestions = [];
           _isLoadingCompanies = false;
         });
       }
     } catch (e) {
-      print('Error fetching companies: $e');
+      Fluttertoast.showToast(msg: 'Error fetching companies: $e');
       setState(() {
         _companySuggestions = [];
         _isLoadingCompanies = false;
@@ -233,14 +236,15 @@ class _PredictionState extends State<Prediction> {
           _isLoadingDirectors = false;
         });
       } else {
-        print('Failed to fetch directors: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Failed to fetch directors: ${response.statusCode}');
         setState(() {
           _directorSuggestions = [];
           _isLoadingDirectors = false;
         });
       }
     } catch (e) {
-      print('Error fetching directors: $e');
+      Fluttertoast.showToast(msg: 'Error fetching directors: $e');
       setState(() {
         _directorSuggestions = [];
         _isLoadingDirectors = false;
@@ -278,14 +282,15 @@ class _PredictionState extends State<Prediction> {
           _isLoadingWriters = false;
         });
       } else {
-        print('Failed to fetch writers: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Failed to fetch writers: ${response.statusCode}');
         setState(() {
           _writerSuggestions = [];
           _isLoadingWriters = false;
         });
       }
     } catch (e) {
-      print('Error fetching writers: $e');
+      Fluttertoast.showToast(msg: 'Error fetching writers: $e');
       setState(() {
         _writerSuggestions = [];
         _isLoadingWriters = false;
@@ -323,14 +328,15 @@ class _PredictionState extends State<Prediction> {
           _isLoadingStars = false;
         });
       } else {
-        print('Failed to fetch stars: ${response.statusCode}');
+        Fluttertoast.showToast(
+            msg: 'Failed to fetch stars: ${response.statusCode}');
         setState(() {
           _starSuggestions = [];
           _isLoadingStars = false;
         });
       }
     } catch (e) {
-      print('Error fetching stars: $e');
+      Fluttertoast.showToast(msg: 'Error fetching stars: $e');
       setState(() {
         _starSuggestions = [];
         _isLoadingStars = false;
@@ -408,12 +414,12 @@ class _PredictionState extends State<Prediction> {
           'timestamp':
               FieldValue.serverTimestamp(), // Add timestamp for ordering
         });
-        print('Data saved to Firestore!');
+        Fluttertoast.showToast(msg: 'Data saved to Firestore!');
       } catch (e) {
-        print('Error saving data to Firestore: $e');
+        Fluttertoast.showToast(msg: 'Error saving data to Firestore: $e');
       }
     } else {
-      print('User not signed in.');
+      Fluttertoast.showToast(msg: 'User not signed in.');
     }
   }
 
@@ -467,7 +473,7 @@ class _PredictionState extends State<Prediction> {
                 pw.Text('Prediction:',
                     style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold, fontSize: 16)),
-                pw.Text('Predicted Revenue: \$${_predictionResult}',
+                pw.Text('Predicted Revenue: \$$_predictionResult',
                     style: const pw.TextStyle(fontSize: 14)),
               ],
             );
@@ -516,20 +522,20 @@ class _PredictionState extends State<Prediction> {
       // Save the pdf
       Directory? appDocDir =
           await getExternalStorageDirectory(); // Change to getApplicationDocumentsDirectory() for internal storage
-      if (appDocDir == null) {
-        appDocDir = await getApplicationDocumentsDirectory();
-      }
+      appDocDir ??= await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
       String movieName = _nameController.text;
       final file = File('$appDocPath/$movieName.pdf');
       await file.writeAsBytes(await pdf.save());
 
       // Show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('PDF report saved to ${file.path}'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('PDF report saved to ${file.path}'),
+          ),
+        );
+      }
     }
   }
 
@@ -547,62 +553,85 @@ class _PredictionState extends State<Prediction> {
       body: RefreshIndicator(
         key: _refreshKey,
         onRefresh: _handleRefresh,
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: SingleChildScrollView(
-                physics:
-                    const AlwaysScrollableScrollPhysics(), // Make it always scrollable, even when content is short
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // const SizedBox(height: 70),
-                    // const Text(
-                    //   "Enter Your Movie Details For Prediction",
-                    //   textAlign: TextAlign.center,
-                    //   style: TextStyle(fontSize: 20, color: Colors.black),
-                    // ),
-                    // const SizedBox(height: 20),
-                    _buildMonthPickerField(),
-                    _buildWriterSearchField(),
-                    _buildRatingDropdown(),
-                    _buildTextField(_nameController, 'Movie Name'),
-                    _buildGenreDropdown(),
-                    _buildDirectorSearchField(),
-                    _buildStarSearchField(),
-                    _buildTextField(_countryController, 'Country'),
-                    _buildCompanySearchField(),
-                    _buildTextField(_runtimeController, 'Runtime',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ]),
-                    _buildScoreDropdown(),
-                    _buildTextField(_budgetController, 'Budget',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ]),
-                    _buildYearPickerField(),
-                    _buildTextField(_votesController, 'Votes',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ]),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              physics:
+                  const AlwaysScrollableScrollPhysics(), // Make it always scrollable, even when content is short
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // const SizedBox(height: 70),
+                  // const Text(
+                  //   "Enter Your Movie Details For Prediction",
+                  //   textAlign: TextAlign.center,
+                  //   style: TextStyle(fontSize: 20, color: Colors.black),
+                  // ),
+                  // const SizedBox(height: 20),
+                  _buildMonthPickerField(),
+                  _buildWriterSearchField(),
+                  _buildRatingDropdown(),
+                  _buildTextField(_nameController, 'Movie Name'),
+                  _buildGenreDropdown(),
+                  _buildDirectorSearchField(),
+                  _buildStarSearchField(),
+                  _buildTextField(_countryController, 'Country'),
+                  _buildCompanySearchField(),
+                  _buildTextField(_runtimeController, 'Runtime',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ]),
+                  _buildScoreDropdown(),
+                  _buildTextField(_budgetController, 'Budget',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ]),
+                  _buildYearPickerField(),
+                  _buildTextField(_votesController, 'Votes',
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ]),
+                  Material(
+                    elevation: 5,
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.deepPurple,
+                    child: SizedBox(
+                      width: 160, // Adjust the width as needed
+                      child: MaterialButton(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                        onPressed: _fetchPrediction,
+                        child: Text(
+                          "Predict Revenue",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (_showResults) // Conditionally render the following widgets
                     Material(
                       elevation: 5,
                       borderRadius: BorderRadius.circular(30),
                       color: Colors.deepPurple,
                       child: SizedBox(
-                        width: 160, // Adjust the width as needed
+                        width: 20,
                         child: MaterialButton(
                           padding: EdgeInsets.symmetric(
                               vertical: 15, horizontal: 20),
-                          onPressed: _fetchPrediction,
+                          onPressed: _downloadAsPdf,
                           child: Text(
-                            "Predict Revenue",
+                            "Download Results",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -613,84 +642,59 @@ class _PredictionState extends State<Prediction> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    if (_showResults) // Conditionally render the following widgets
-                      Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(30),
-                        color: Colors.deepPurple,
-                        child: SizedBox(
-                          width: 20,
-                          child: MaterialButton(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 20),
-                            onPressed: _downloadAsPdf,
-                            child: Text(
-                              "Download Results",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                  const SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment
+                        .center, // Centers children horizontally
+                    children: [
+                      Center(
+                        // Explicitly centers the first Text widget
+                        child: Text(
+                          'Predicted Revenue is \$${_predictionResult.isEmpty ? " " : _predictionResult}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 56, 23, 96),
                           ),
                         ),
                       ),
-                    const SizedBox(height: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment
-                          .center, // Centers children horizontally
-                      children: [
-                        Center(
-                          // Explicitly centers the first Text widget
-                          child: Text(
-                            'Predicted Revenue is \$${_predictionResult.isEmpty ? " " : _predictionResult}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 56, 23, 96),
-                            ),
+                      const SizedBox(height: 20),
+                      Center(
+                        // Explicitly centers the second Text widget
+                        child: const Text(
+                          'SHAP Explanations:',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 56, 23, 96),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        Center(
-                          // Explicitly centers the second Text widget
-                          child: const Text(
-                            'SHAP Explanations:',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 56, 23, 96),
+                      ),
+                    ],
+                  ),
+                  if (_explanations.isNotEmpty)
+                    for (var modelName in _explanations.keys)
+                      if (modelName != "error")
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '  $modelName Model:',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_explanations.isNotEmpty)
-                      for (var modelName in _explanations.keys)
-                        if (modelName != "error")
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            for (var feature in _explanations[modelName].keys)
                               Text(
-                                '  $modelName Model:',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
+                                '      $feature: ${_explanations[modelName][feature].toStringAsFixed(4)}',
+                                style: const TextStyle(color: Colors.black),
                               ),
-                              for (var feature in _explanations[modelName].keys)
-                                Text(
-                                  '      $feature: ${_explanations[modelName][feature].toStringAsFixed(4)}',
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                            ],
-                          ),
-                    if (_explanations.containsKey("error"))
-                      Text("Error: ${_explanations["error"]}",
-                          style: const TextStyle(color: Colors.red)),
-                  ],
-                ),
+                          ],
+                        ),
+                  if (_explanations.containsKey("error"))
+                    Text("Error: ${_explanations["error"]}",
+                        style: const TextStyle(color: Colors.red)),
+                ],
               ),
             ),
           ),
@@ -918,13 +922,12 @@ class _PredictionState extends State<Prediction> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text("Select Year"),
-                content: Container(
+                content: SizedBox(
                   width: 300,
                   height: 300,
                   child: YearPicker(
                     firstDate: DateTime(1900),
                     lastDate: DateTime(DateTime.now().year + 10),
-                    initialDate: DateTime.now(),
                     selectedDate: DateTime(_yearController.text.isNotEmpty
                         ? int.parse(_yearController.text)
                         : DateTime.now().year),

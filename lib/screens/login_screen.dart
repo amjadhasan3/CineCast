@@ -175,8 +175,13 @@ class _LoginScreenState extends State<LoginScreen> {
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => HomeScreen())),
+                  if (mounted)
+                    {
+                      // Check if the widget is still mounted
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      ),
+                    }
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
@@ -203,7 +208,6 @@ class _LoginScreenState extends State<LoginScreen> {
             errorMessage = "An undefined Error happened.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
-        print(error.code);
       }
     }
   }
