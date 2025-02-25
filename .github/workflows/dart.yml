@@ -1,0 +1,42 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Setup Flutter instead of Dart
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.2'  # Replace with your Flutter version
+
+      - name: Verify Flutter Installation
+        run: flutter --version
+
+      # Cache Flutter dependencies for faster builds
+      - name: Cache Flutter Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Analyze Project Source (Fail on Infos)
+        run: flutter analyze --fatal-infos
+
+      - name: Ensure Scripts Are Executable (Optional)
+        run: chmod +x ./scripts/*.sh || true
