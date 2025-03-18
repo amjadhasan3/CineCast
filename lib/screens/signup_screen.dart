@@ -16,12 +16,12 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
 
-  // string for displaying the error Message
+  //string for displaying the error Message
   String? errorMessage;
 
-  // our form key
+  //form key
   final _formKey = GlobalKey<FormState>();
-  // editing Controller
+
   final firstNameEditingController = TextEditingController();
   final secondNameEditingController = TextEditingController();
   final emailEditingController = TextEditingController();
@@ -30,7 +30,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //first name field
     final firstNameField = TextFormField(
         style: TextStyle(color: Colors.white),
         autofocus: false,
@@ -61,7 +60,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
-    //second name field
     final secondNameField = TextFormField(
         style: TextStyle(color: Colors.white),
         autofocus: false,
@@ -88,7 +86,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
-    //email field
     final emailField = TextFormField(
         style: TextStyle(color: Colors.white),
         autofocus: false,
@@ -98,7 +95,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (value!.isEmpty) {
             return ("Please Enter Your Email");
           }
-          // reg expression for email validation
+          //reg expression for email validation
           if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
               .hasMatch(value)) {
             return ("Please Enter a valid email");
@@ -120,7 +117,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
-    //password field
     final passwordField = TextFormField(
         style: TextStyle(color: Colors.white),
         autofocus: false,
@@ -151,7 +147,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
-    //confirm password field
     final confirmPasswordField = TextFormField(
         style: TextStyle(color: Colors.white),
         autofocus: false,
@@ -179,18 +174,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ));
 
-    //signup button
     final signUpButton = Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       color: const Color.fromRGBO(103, 58, 183, 1),
       child: MaterialButton(
           padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
-          // minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
-            // Navigator.pushReplacement(
-            //     context, MaterialPageRoute(builder: (context) => HomeScreen()));
-
             signUp(emailEditingController.text, passwordEditingController.text);
           },
           child: Text(
@@ -203,9 +193,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      // ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -244,13 +231,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         children: <Widget>[
                           Text("Already have an account? "),
                           GestureDetector(
-                            // onTap: () {
-                            //   // Navigator.push(
-                            //   //     context,
-                            //   //     MaterialPageRoute(
-                            //   //         builder: (context) =>
-                            //   //             RegistrationScreen()));
-                            // },
                             onTap: () {
                               Navigator.push(
                                   context,
@@ -290,16 +270,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":
-            errorMessage = "Your email address appears to be malformed.";
+            errorMessage = "Your email address is invalid.";
             break;
           case "wrong-password":
-            errorMessage = "Your password is wrong.";
+            errorMessage = "Wrong Password.";
             break;
           case "user-not-found":
-            errorMessage = "User with this email doesn't exist.";
+            errorMessage = "User Not Found.";
             break;
           case "user-disabled":
-            errorMessage = "User with this email has been disabled.";
+            errorMessage = "User Disabled.";
             break;
           case "too-many-requests":
             errorMessage = "Too many requests";
@@ -308,7 +288,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             errorMessage = "Signing in with Email and Password is not enabled.";
             break;
           default:
-            errorMessage = "An undefined Error happened.";
+            errorMessage = "Unknown Error.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
       }
@@ -316,16 +296,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   postDetailsToFirestore() async {
-    // calling our firestore
-    // calling our user model
-    // sedning these values
+    //calling firestore
+    //calling user model
+    //sending  values to firestore
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
 
     UserModel userModel = UserModel();
 
-    // writing all the values
+    //writing all the values
     userModel.email = user!.email;
     userModel.uid = user.uid;
     userModel.firstName = firstNameEditingController.text;
@@ -335,12 +315,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully :) ");
+    Fluttertoast.showToast(msg: "Welcome");
 
     if (mounted) {
-      // Check if the widget is still mounted
       Navigator.pushAndRemoveUntil(
-        context, // Use context here only if mounted is true
+        context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
         (route) => false,
       );

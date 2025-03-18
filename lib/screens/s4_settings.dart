@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart'; // Import intl package
+import 'package:intl/intl.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,12 +19,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   final FirebaseFirestore _firestore =
-      FirebaseFirestore.instance; // Add FirebaseFirestore instance
+      FirebaseFirestore.instance; //add FirebaseFirestore instance
 
   @override
   void initState() {
     super.initState();
-    loadUserData(); // Load user data in initState
+    loadUserData(); //loads user data in initState
   }
 
   Future<void> loadUserData() async {
@@ -42,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       } catch (e) {
         Fluttertoast.showToast(msg: "Error loading user data: $e");
-        // Handle the error appropriately (e.g., display an error message)
+        //handle the error
       }
     }
   }
@@ -51,7 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Color(0xFF0A0E21),
         title: Center(
             child: Text('Settings',
                 style: TextStyle(
@@ -62,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment:
-              CrossAxisAlignment.start, // Align items to the start
+              CrossAxisAlignment.start, //align items to the start
           children: <Widget>[
             Center(
               child: Text(
@@ -72,8 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 56, 23, 96),
                 ),
-                textAlign: TextAlign
-                    .center, // Add this line to center the text horizontally within its available space
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 10),
@@ -82,8 +80,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 "${loggedInUser.email}",
                 style: TextStyle(
                     color: Colors.black54, fontWeight: FontWeight.w500),
-                textAlign: TextAlign
-                    .center, // Add this line to center the text horizontally within its available space
+                textAlign: TextAlign.center,
               ),
             ),
             SizedBox(height: 15),
@@ -107,7 +104,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             SizedBox(height: 24),
-            Text('Saved / History Predictions:',
+            Text('History Predictions:',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

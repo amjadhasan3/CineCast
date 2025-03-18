@@ -3,8 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-const String apiKey =
-    '845270b9ac9191ab88da8fa8596672f9'; // Replace with your TMDB API Key
+const String apiKey = '845270b9ac9191ab88da8fa8596672f9';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -41,14 +40,12 @@ class _SearchState extends State<Search> {
             msg: 'Search failed with status code: ${response.statusCode}');
         setState(() {
           _isLoading = false;
-          // Optionally display an error message to the user
         });
       }
     } catch (e) {
       Fluttertoast.showToast(msg: 'An error occurred: $e');
       setState(() {
         _isLoading = false;
-        // Optionally display an error message to the user
       });
     }
   }
@@ -129,8 +126,6 @@ class MovieSearchResultTile extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            // color: const Color.fromARGB(
-            //     255, 158, 158, 158), // Card background color
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
@@ -190,15 +185,6 @@ class MovieSearchResultTile extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      // SizedBox(height: 8),
-                      // Wrap(
-                      //   spacing: 4,
-                      //   children: [
-                      //     //Example Genre Tags
-                      //     GenreTag(genre: "Action"),
-                      //     GenreTag(genre: "Sci-Fi"),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -207,10 +193,10 @@ class MovieSearchResultTile extends StatelessWidget {
           ),
         ),
         Divider(
-          color: Colors.grey.shade300, // Adjust color as needed
-          thickness: 1, // Adjust thickness as needed
-          indent: 16, // Adjust indent as needed
-          endIndent: 16, // Adjust endIndent as needed
+          color: Colors.grey.shade300,
+          thickness: 1,
+          indent: 16,
+          endIndent: 16,
         ),
       ],
     );
