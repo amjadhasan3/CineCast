@@ -10,7 +10,7 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:intl/intl.dart'; // Import intl package
+import 'package:intl/intl.dart';
 
 class Prediction extends StatefulWidget {
   const Prediction({super.key});
@@ -37,51 +37,47 @@ class _PredictionState extends State<Prediction> {
   final TextEditingController _votesController = TextEditingController();
   String _predictionResult = '';
   Map<String, dynamic> _explanations = {};
-  Map<String, dynamic> _movieData = {}; // Store the movie data
+  Map<String, dynamic> _movieData = {}; //store the movie data
   final _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // TMDB API Key (Replace with your actual key)
-  final String _tmdbApiKey =
-      '845270b9ac9191ab88da8fa8596672f9'; // Replace with your actual API key
+  final String _tmdbApiKey = '845270b9ac9191ab88da8fa8596672f9';
 
-  // Director Search
+  //director Search
   List<Map<String, dynamic>> _directorSuggestions = [];
   bool _isLoadingDirectors = false;
 
-  // Writer Search
+  //writer Search
   List<Map<String, dynamic>> _writerSuggestions = [];
   bool _isLoadingWriters = false;
 
-  // Star Search
+  //star Search
   List<Map<String, dynamic>> _starSuggestions = [];
   bool _isLoadingStars = false;
 
-  // Movie Rating Options
+  //movie Rating Options
   final List<String> _ratingOptions = [
     'G',
     'PG',
     'PG-13',
     'R',
     'NC-17',
-    'Unrated' // Or handle unrated differently, depending on your needs.
+    'Unrated'
   ];
 
-  // Genre Options (from TMDB)
+  //genre Options from TMDB
   List<Map<String, dynamic>> _genreOptions = [];
   bool _isLoadingGenres = false;
 
-  // Company Options (from TMDB Search)
+  //company Options from TMDB Search
   List<Map<String, dynamic>> _companySuggestions = [];
   bool _isLoadingCompanies = false;
 
-  // Score Options
-  final List<String> _scoreOptions = List.generate(
-      11,
-      (index) =>
-          index.toString()); // Generates a list of strings from '0' to '10'
+  //score options
+  final List<String> _scoreOptions = List.generate(11,
+      (index) => index.toString()); //generates a list of strings from 0 to 10
 
-  // Refresh Indicator Key
+  //refresh indicator key
   final _refreshKey = GlobalKey<RefreshIndicatorState>();
 
   bool _showResults = false;
@@ -93,7 +89,7 @@ class _PredictionState extends State<Prediction> {
   }
 
   Future<void> _handleRefresh() async {
-    // Clear any existing data
+    //clears any existing data
     _directorSuggestions.clear();
     _writerSuggestions.clear();
     _starSuggestions.clear();
@@ -118,10 +114,8 @@ class _PredictionState extends State<Prediction> {
       _movieData = {};
     });
 
-    // Refetch initial data (like genres)
-    await _fetchGenres(); // Assuming this is what you want to refresh
-
-    // Add any other refresh-related logic here
+    //refetch initial data genres
+    await _fetchGenres();
   }
 
   Future<void> _fetchGenres() async {
@@ -171,7 +165,7 @@ class _PredictionState extends State<Prediction> {
 
     setState(() {
       _isLoadingCompanies = true;
-      _companySuggestions = []; // Clear previous suggestions
+      _companySuggestions = []; //clear previous suggestions
     });
 
     try {
@@ -217,7 +211,7 @@ class _PredictionState extends State<Prediction> {
 
     setState(() {
       _isLoadingDirectors = true;
-      _directorSuggestions = []; // Clear previous suggestions
+      _directorSuggestions = []; //clears previous suggestions
     });
 
     try {
@@ -263,7 +257,7 @@ class _PredictionState extends State<Prediction> {
 
     setState(() {
       _isLoadingWriters = true;
-      _writerSuggestions = []; // Clear previous suggestions
+      _writerSuggestions = []; //clears previous suggestions
     });
 
     try {
@@ -309,7 +303,7 @@ class _PredictionState extends State<Prediction> {
 
     setState(() {
       _isLoadingStars = true;
-      _starSuggestions = []; // Clear previous suggestions
+      _starSuggestions = []; //clears previous suggestions
     });
 
     try {
@@ -365,7 +359,7 @@ class _PredictionState extends State<Prediction> {
         "votes": int.parse(_votesController.text),
       };
 
-      _movieData = movieData; // Store the movie data
+      _movieData = movieData; //stores the movie data
 
       try {
         final response = await http.post(
@@ -378,10 +372,10 @@ class _PredictionState extends State<Prediction> {
           final decodedResponse = json.decode(response.body);
           setState(() {
             _predictionResult = decodedResponse['prediction'].toString();
-            _showResults = true; // Show the results and download button
+            _showResults = true; //show the results and download button
           });
           _fetchExplanations(movieData).then((_) {
-            // Save data AFTER explanations are fetched
+            //save data after explanations are fetched
             _saveDataToFirestore(movieData, _predictionResult, _explanations);
           });
         } else {
@@ -410,8 +404,7 @@ class _PredictionState extends State<Prediction> {
           'movieData': movieData,
           'predictionResult': predictionResult,
           'explanations': explanations,
-          'timestamp':
-              FieldValue.serverTimestamp(), // Add timestamp for ordering
+          'timestamp': FieldValue.serverTimestamp(), //add timestamp
         });
         Fluttertoast.showToast(msg: 'Data saved to Firestore!');
       } catch (e) {
@@ -425,8 +418,7 @@ class _PredictionState extends State<Prediction> {
   Future<void> _fetchExplanations(Map<String, dynamic> movieData) async {
     try {
       final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2:3000/explain'), // Try this for Android emulator
+        Uri.parse('http://10.0.2.2:3000/explain'),
         headers: {"Content-Type": "application/json"},
         body: json.encode(movieData),
       );
@@ -451,7 +443,7 @@ class _PredictionState extends State<Prediction> {
     final pdf = pw.Document();
 
     if (_formKey.currentState!.validate()) {
-      // First Page: User Input and Prediction
+      //first page: User Input and Prediction
       pdf.addPage(
         pw.Page(
           pageFormat: PdfPageFormat.a4,
@@ -480,7 +472,7 @@ class _PredictionState extends State<Prediction> {
         ),
       );
 
-      // Second Page onwards: SHAP Explanations (One page per model)
+      //second page: SHAP Explanations (One page per model)
       if (_explanations.isNotEmpty && !_explanations.containsKey("error")) {
         for (var modelName in _explanations.keys) {
           pdf.addPage(
@@ -504,7 +496,7 @@ class _PredictionState extends State<Prediction> {
           );
         }
       } else {
-        //Error Page
+        //error Page
         pdf.addPage(
           pw.Page(
             pageFormat: PdfPageFormat.a4,
@@ -518,16 +510,15 @@ class _PredictionState extends State<Prediction> {
         );
       }
 
-      // Save the pdf
-      Directory? appDocDir =
-          await getExternalStorageDirectory(); // Change to getApplicationDocumentsDirectory() for internal storage
+      //saves the pdf
+      Directory? appDocDir = await getExternalStorageDirectory();
       appDocDir ??= await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
       String movieName = _nameController.text;
       final file = File('$appDocPath/$movieName.pdf');
       await file.writeAsBytes(await pdf.save());
 
-      // Show a success message
+      //show a success message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -542,7 +533,6 @@ class _PredictionState extends State<Prediction> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Color(0xFF0A0E21),
         title: Center(
             child: Text('Enter Movie Data For Prediction',
                 style: TextStyle(
@@ -558,17 +548,10 @@ class _PredictionState extends State<Prediction> {
             key: _formKey,
             child: SingleChildScrollView(
               physics:
-                  const AlwaysScrollableScrollPhysics(), // Make it always scrollable, even when content is short
+                  const AlwaysScrollableScrollPhysics(), //makes it always scrollable
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // const SizedBox(height: 70),
-                  // const Text(
-                  //   "Enter Your Movie Details For Prediction",
-                  //   textAlign: TextAlign.center,
-                  //   style: TextStyle(fontSize: 20, color: Colors.black),
-                  // ),
-                  // const SizedBox(height: 20),
                   _buildMonthPickerField(),
                   _buildWriterSearchField(),
                   _buildRatingDropdown(),
@@ -600,7 +583,7 @@ class _PredictionState extends State<Prediction> {
                     borderRadius: BorderRadius.circular(30),
                     color: Colors.deepPurple,
                     child: SizedBox(
-                      width: 160, // Adjust the width as needed
+                      width: 160,
                       child: MaterialButton(
                         padding:
                             EdgeInsets.symmetric(vertical: 15, horizontal: 20),
@@ -618,7 +601,7 @@ class _PredictionState extends State<Prediction> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (_showResults) // Conditionally render the following widgets
+                  if (_showResults) //conditionally render the following widgets
                     Material(
                       elevation: 5,
                       borderRadius: BorderRadius.circular(30),
@@ -643,11 +626,9 @@ class _PredictionState extends State<Prediction> {
                     ),
                   const SizedBox(height: 20),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment
-                        .center, // Centers children horizontally
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Center(
-                        // Explicitly centers the first Text widget
                         child: Text(
                           'Predicted Revenue is \$${_predictionResult.isEmpty ? " " : _predictionResult}',
                           style: const TextStyle(
@@ -659,7 +640,6 @@ class _PredictionState extends State<Prediction> {
                       ),
                       const SizedBox(height: 20),
                       Center(
-                        // Explicitly centers the second Text widget
                         child: const Text(
                           'SHAP Explanations:',
                           style: TextStyle(
@@ -711,7 +691,7 @@ class _PredictionState extends State<Prediction> {
         decoration: InputDecoration(
           labelText: 'Release Month',
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintStyle: TextStyle(color: Colors.white70),
+          hintStyle: TextStyle(color: Colors.white),
           filled: true,
           fillColor: const Color.fromARGB(255, 2, 22, 52),
           border: OutlineInputBorder(
@@ -719,7 +699,7 @@ class _PredictionState extends State<Prediction> {
           ),
           suffixIcon: Icon(Icons.calendar_month, color: Colors.white70),
         ),
-        readOnly: true, // Prevent manual editing
+        readOnly: true, //prevents manual editing
         onTap: () async {
           DateTime? pickedDate = await showMonthPicker(
             context: context,
@@ -730,7 +710,7 @@ class _PredictionState extends State<Prediction> {
 
           if (pickedDate != null) {
             String formattedMonth =
-                DateFormat('MMMM').format(pickedDate); // Format to month name
+                DateFormat('MMMM').format(pickedDate); //formats to month name
             setState(() {
               _releasedController.text = formattedMonth;
             });
@@ -792,7 +772,7 @@ class _PredictionState extends State<Prediction> {
         decoration: InputDecoration(
           labelText: 'Genre',
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintStyle: TextStyle(color: Colors.white70),
+          hintStyle: TextStyle(color: Colors.white),
           filled: true,
           fillColor: const Color.fromARGB(255, 2, 22, 52),
           border: OutlineInputBorder(
@@ -801,7 +781,7 @@ class _PredictionState extends State<Prediction> {
           suffixIcon: _isLoadingGenres
               ? CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
-              : null, // Loading indicator
+              : null, //loading indicator
         ),
         dropdownColor: const Color.fromARGB(255, 2, 22, 52),
         style: TextStyle(color: Colors.white),
@@ -813,7 +793,7 @@ class _PredictionState extends State<Prediction> {
           );
         }).toList(),
         onChanged: _isLoadingGenres
-            ? null // Disable dropdown while loading
+            ? null //disable dropdown while loading
             : (newValue) {
                 setState(() {
                   _genreController.text = newValue!;
@@ -837,7 +817,7 @@ class _PredictionState extends State<Prediction> {
         children: [
           TextFormField(
             controller: _companyController,
-            style: TextStyle(color: Colors.white), // Sets text color to white
+            style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               labelText: 'Company',
               contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -867,7 +847,7 @@ class _PredictionState extends State<Prediction> {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.grey[300]!),
               ),
-              constraints: BoxConstraints(maxHeight: 200), // Scrollable area
+              constraints: BoxConstraints(maxHeight: 200), //scrollable area
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: _companySuggestions.length,
@@ -878,7 +858,7 @@ class _PredictionState extends State<Prediction> {
                       setState(() {
                         _companyController.text = company['name'];
                         _companySuggestions =
-                            []; // Clear suggestions after selection
+                            []; //clears suggestions after selection
                       });
                     },
                     child: Padding(
@@ -914,7 +894,7 @@ class _PredictionState extends State<Prediction> {
           ),
           suffixIcon: Icon(Icons.calendar_today, color: Colors.white70),
         ),
-        readOnly: true, // Prevent manual editing
+        readOnly: true, //prevents manual editing
         onTap: () async {
           final DateTime? pickedDate = await showDialog(
             context: context,
@@ -1062,7 +1042,7 @@ class _PredictionState extends State<Prediction> {
         children: [
           TextFormField(
             controller: controller,
-            style: TextStyle(color: Colors.white), // Sets text color to white
+            style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
               labelText: labelText,
               contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -1089,7 +1069,7 @@ class _PredictionState extends State<Prediction> {
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: Colors.grey[300]!),
               ),
-              constraints: BoxConstraints(maxHeight: 200), // Scrollable area
+              constraints: BoxConstraints(maxHeight: 200), //scrollable area
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: suggestions.length,
@@ -1122,7 +1102,7 @@ class _PredictionState extends State<Prediction> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
         controller: controller,
-        style: TextStyle(color: Colors.white), // Sets text color to white
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -1134,11 +1114,11 @@ class _PredictionState extends State<Prediction> {
           ),
         ),
         keyboardType: keyboardType,
-        inputFormatters: inputFormatters, // Add input formatters here
+        inputFormatters: inputFormatters, //add input formatters here
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter $label';
-          } // No need to check for valid numbers if keyboardType is TextInputType.text
+          }
           return null;
         },
       ),

@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-// Replace with your actual TMDB API key
 const String apiKey = '845270b9ac9191ab88da8fa8596672f9';
 
 class Home extends StatefulWidget {
@@ -29,8 +28,6 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchHighestGrossingMovies() async {
-    // Adjust these parameters based on the TMDB API and what "highest grossing" means
-    // The below uses "now playing" as a proxy. You'll likely want "top rated" or "popular" with filtering.
     final url = Uri.parse(
         'https://api.themoviedb.org/3/movie/upcoming?api_key=$apiKey&language=en-US&page=1');
     final response = await http.get(url);
@@ -41,7 +38,6 @@ class _HomeState extends State<Home> {
         highestGrossingMovies = data['results'];
       });
     } else {
-      // Handle error appropriately (show a message, etc.)
       Fluttertoast.showToast(
           msg:
               'Failed to load highest grossing movies: ${response.statusCode}');
@@ -59,7 +55,6 @@ class _HomeState extends State<Home> {
         popularMovies = data['results'];
       });
     } else {
-      // Handle error appropriately (show a message, etc.)
       Fluttertoast.showToast(
           msg: 'Failed to load popular movies: ${response.statusCode}');
     }
@@ -69,7 +64,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Color(0xFF0A0E21),
         title: Center(
             child: Text('CineCast',
                 style: TextStyle(
@@ -89,7 +83,7 @@ class _HomeState extends State<Home> {
                       color: Color(0xFF0A0E21))),
               SizedBox(height: 16),
               SizedBox(
-                height: 320, // Adjust height as needed
+                height: 320,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: highestGrossingMovies.length,
@@ -192,8 +186,6 @@ class PopularMovieCard extends StatelessWidget {
       children: [
         Container(
           decoration: BoxDecoration(
-            // color: const Color.fromARGB(
-            //     255, 158, 158, 158), // Card background color
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(

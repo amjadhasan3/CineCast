@@ -6,7 +6,7 @@ class UserModel {
 
   UserModel({this.uid, this.email, this.firstName, this.secondName});
 
-  // receiving data from server
+  //receive data from server
   factory UserModel.fromMap(map) {
     return UserModel(
       uid: map['uid'],
@@ -16,7 +16,7 @@ class UserModel {
     );
   }
 
-  // sending data to our server
+  //send data to the server
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,

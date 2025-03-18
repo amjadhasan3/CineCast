@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // form key
+  //form key
   final _formKey = GlobalKey<FormState>();
 
   // editing controller
@@ -22,12 +22,11 @@ class _LoginScreenState extends State<LoginScreen> {
   //firebase
   final _auth = FirebaseAuth.instance;
 
-  // string for displaying the error Message
+  //string for displaying the error Message
   String? errorMessage;
 
   @override
   Widget build(BuildContext context) {
-    //email field
     final emailField = TextFormField(
       style: TextStyle(color: Colors.white),
       autofocus: false,
@@ -37,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (value!.isEmpty) {
           return ("Please Enter Your Email");
         }
-        // reg expression for email validation
+        //reg expression for email validation
         if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]").hasMatch(value)) {
           return ("Please Enter a valid email");
         }
@@ -59,9 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    //password field
     final passwordField = TextFormField(
-        style: TextStyle(color: Colors.white), // Sets text color to white
+        style: TextStyle(color: Colors.white),
         autofocus: false,
         controller: passwordController,
         obscureText: true,
@@ -167,17 +165,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // login function
+  //login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
         await _auth
             .signInWithEmailAndPassword(email: email, password: password)
             .then((uid) => {
-                  Fluttertoast.showToast(msg: "Login Successful"),
+                  Fluttertoast.showToast(msg: "Welcome"),
                   if (mounted)
                     {
-                      // Check if the widget is still mounted
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => HomeScreen()),
                       ),
@@ -186,26 +183,26 @@ class _LoginScreenState extends State<LoginScreen> {
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":
-            errorMessage = "Your email address appears to be malformed.";
+            errorMessage = "Your email address is invalid.";
 
             break;
           case "wrong-password":
-            errorMessage = "Your password is wrong.";
+            errorMessage = "Wrong Password.";
             break;
           case "user-not-found":
-            errorMessage = "User with this email doesn't exist.";
+            errorMessage = "User Not Found.";
             break;
           case "user-disabled":
-            errorMessage = "User with this email has been disabled.";
+            errorMessage = "User Disabled.";
             break;
           case "too-many-requests":
-            errorMessage = "Too many requests";
+            errorMessage = "Too Many Requests";
             break;
           case "operation-not-allowed":
             errorMessage = "Signing in with Email and Password is not enabled.";
             break;
           default:
-            errorMessage = "An undefined Error happened.";
+            errorMessage = "Unknown Error.";
         }
         Fluttertoast.showToast(msg: errorMessage!);
       }
